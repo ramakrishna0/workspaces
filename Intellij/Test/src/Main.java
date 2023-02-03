@@ -1,8 +1,7 @@
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -55,13 +54,18 @@ public class Main {
         executorService.shutdown();*/
         System.out.println("------------------------------------------------------------------------------------------");
         long startOfCompleteFuture = System.currentTimeMillis();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         CompletableFuture<Set<Integer>> completableFuture1 = CompletableFuture.supplyAsync(() -> {
             try {
                 return new MyFuture().trial1();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }, executorService);/*.thenApply(result -> {
+            System.out.println(result);
+            System.out.println("time: " + startOfCompleteFuture);
+            return result;
+        });*/
 
         CompletableFuture<Set<Integer>> completableFuture2 = CompletableFuture.supplyAsync(() -> {
             try {
@@ -69,7 +73,12 @@ public class Main {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }, executorService);/*.thenApply(result -> {
+            System.out.println("time: " + startOfCompleteFuture);
+            System.out.println(result);
+            return result;
+        });*/
+
 
 
         completableFuture1.whenComplete((res, throwable) -> {
@@ -81,8 +90,13 @@ public class Main {
             System.out.println(res);
             System.out.println("execution time: " + (System.currentTimeMillis() - startOfCompleteFuture) );
         });
-
         System.out.println("End of Main");
+        executorService.shutdown();
+        executorService.awaitTermination(1000000, TimeUnit.SECONDS);
+
+
+        //List<CompletableFuture> futureList = CompletableFuture.allOf(new List[completableFuture1, completableFuture2]);
+
 
     }
 

@@ -11,7 +11,7 @@ public class MyFuture {
 
     public Set<Integer> trial1 () throws InterruptedException {
         System.out.println("trial1 sleep");
-        Thread.sleep(2000);
+        Thread.sleep(5000);
         System.out.println(("trial1 active"));
         return new HashSet<>(Arrays.asList(new Integer[]{1, 2, 3, 4}));
     }
